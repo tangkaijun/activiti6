@@ -1,0 +1,61 @@
+server:
+  port: 8080
+spring:
+  profiles:
+    active: dev
+  application:
+    name:  activiti-admin
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/activiti6?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: root
+      driverClassName: com.mysql.jdbc.Driver
+      initial-size: 5
+      maxActive: 10
+      minIdle: 10
+      validation-query: SELECT 'x' from dual
+      test-while-idle: true
+      # 空闲链接,每10秒检测一次
+      time-between-eviction-runs-millis: 10000
+      # 空闲链接存活180秒,就抛弃
+      min-evictable-idle-time-millis: 300000
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      # 不要加wall,该过滤用户防止sql注入,会阻塞alter语句
+      filters: stat,slf4j
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=1000
+      useGlobalDataSourceStat: true
+  http:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mvc:
+    favicon:
+      enabled: false
+  activiti:
+    databaseSchemaUpdate: true
+    checkProcessDefinitions: false
+  jackson:
+     date-format: yyyy-MM-dd HH:mm:ss
+     time-zone: Asia/Shanghai
+eureka:
+  client:
+    service-url:
+      #defaultZone: http://172.16.8.20:8761/eureka
+
+#配置用户中心服务地址
+service:
+    userCneterHost: http://172.16.13.253:6105
+
+#httpclient配置
+httpclient:
+  maxTotal: 100
+  defaultMaxPerRoute: 20
+  connectTimeout: 1000
+  connectionRequestTimeout: 500
+  socketTimeout: 10000
+  staleConnectionCheckEnabled: true
+
+
