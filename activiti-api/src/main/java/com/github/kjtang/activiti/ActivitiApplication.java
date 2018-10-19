@@ -1,4 +1,4 @@
-package com.kjtang.activiti;
+package com.github.kjtang.activiti;
 
 import org.activiti.spring.boot.SecurityAutoConfiguration;
 import org.springframework.boot.SpringApplication;
@@ -16,5 +16,6 @@ public class ActivitiApplication {
     public static void main(String[] args){
         SpringApplication.run(ActivitiApplication.class,args);
     }
+
 
 }

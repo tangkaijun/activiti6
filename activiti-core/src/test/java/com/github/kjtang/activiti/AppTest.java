@@ -1,4 +1,4 @@
-package com.kjtang.activiti;
+package com.github.kjtang.activiti;
 
 /**
  * Unit test for simple App.
