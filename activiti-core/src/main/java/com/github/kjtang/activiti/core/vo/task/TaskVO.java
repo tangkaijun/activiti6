@@ -1,5 +1,7 @@
 package com.github.kjtang.activiti.core.vo.task;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
@@ -7,6 +9,7 @@ import java.util.Map;
 /**
  * Created by kjtang on 2018/10/16.
  */
+@Data
 public class TaskVO implements Serializable{
 
     /**

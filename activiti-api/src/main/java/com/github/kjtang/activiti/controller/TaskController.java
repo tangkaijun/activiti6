@@ -1,5 +1,6 @@
 package com.github.kjtang.activiti.controller;
 
+import com.github.kjtang.activiti.core.dto.task.ExecuteTaskActionDTO;
 import com.github.kjtang.activiti.core.dto.task.GetToDoTaskPagedListDTO;
 import com.github.kjtang.activiti.core.vo.task.TaskVO;
 import com.github.pagehelper.PageInfo;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -27,6 +29,12 @@ public class TaskController {
     @RequestMapping("getToDoTaskPagedList")
     public ResponseEntity<PageInfo<TaskVO>> getToDoTaskPagedList(@RequestBody GetToDoTaskPagedListDTO toDoTaskPageListDTO){
         return ResponseEntity.ok(taskExtService.getToDoTaskPagedList(toDoTaskPageListDTO));
+    }
+
+    @ApiOperation("操作任务")
+    @RequestMapping(value="executeTaskAction",method = RequestMethod.POST)
+    public void executeTaskAction(@RequestBody ExecuteTaskActionDTO executeTaskActionDTO){
+            taskExtService.executeTaskAction(executeTaskActionDTO);
     }
 
 }
