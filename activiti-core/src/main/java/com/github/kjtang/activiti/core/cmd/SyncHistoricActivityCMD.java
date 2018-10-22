@@ -33,12 +33,8 @@ public class SyncHistoricActivityCMD implements Command<List<HistoricActivityIns
         // 提交到数据库
         commandContext.getDbSqlSession().flush();
         // 添加历史活动节点的
-        List<String> ids = new ArrayList<>();
         for (HistoricActivityInstanceEntity hai : historyActivityEntityList) {
-            if(!ids.contains(hai.getId())) {
                 historicActivityInstanceEntityManager.insert(hai);
-                ids.add(hai.getId());
-            }
         }
         // 提交到数据库
         commandContext.getDbSqlSession().flush();

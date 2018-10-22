@@ -19,8 +19,11 @@ import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.impl.interceptor.Command;
 import org.activiti.engine.impl.persistence.entity.HistoricActivityInstanceEntity;
+import org.activiti.engine.impl.persistence.entity.HistoricActivityInstanceEntityManager;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Task;
@@ -167,6 +170,7 @@ public class TaskExtServiceImpl implements TaskExtService {
         FlowNode currentActivity = null;
         // 用于保存原来的任务节点的出口信息
         SequenceFlow oldSequenceFlow = null;
+
         /**
         for(FlowElement flowElement:flowElements){
            if(currentTask.getTaskDefinitionKey().equals(flowElement.getId())){
@@ -179,7 +183,11 @@ public class TaskExtServiceImpl implements TaskExtService {
         FlowNode targetActivity = (FlowNode)bpmnModel.getMainProcess().getFlowElement(targetTask.getTaskDefinitionKey());
         // 流程跳转
         managementService.executeCommand(new JumpTaskCMD(currentTask.getId(),targetActivity.getId()));
-
+        HistoricActivityInstanceEntityManager historicActivityInstanceEntityManager = Context.getCommandContext().getHistoricActivityInstanceEntityManager();
+        historicActivityInstanceEntityManager.deleteHistoricActivityInstancesByProcessInstanceId(processInstanceId);
+        for (HistoricActivityInstanceEntity historicActivityInstance : insertHistoryActivityList) {
+            historicActivityInstanceEntityManager.insert(historicActivityInstance);
+        }
         /**
         HistoricActivityInstance destActivity = historyService.createHistoricActivityInstanceQuery().singleResult();
         FlowNode targetFlowNode = (FlowNode)bpmnModel.getMainProcess().getFlowElement(destActivity.getActivityId());
@@ -213,7 +221,22 @@ public class TaskExtServiceImpl implements TaskExtService {
             historyService.deleteHistoricTaskInstance(historicTaskInstance.getId());
         }*/
         // 同步历史活动节点
-        managementService.executeCommand(new SyncHistoricActivityCMD(processDefinitionId,insertHistoryActivityList));
+        /**
+        managementService.executeCommand((Command<List<HistoricActivityInstanceEntity>>) commandContext -> {
+            HistoricActivityInstanceEntityManager historicActivityInstanceEntityManager =
+                    commandContext.getHistoricActivityInstanceEntityManager();
+            // 删除所有的历史活动节点
+            historicActivityInstanceEntityManager
+                    .deleteHistoricActivityInstancesByProcessInstanceId(processInstanceId);
+            // 提交到数据库
+            //commandContext.getDbSqlSession().flush();
+            // 添加历史活动节点的
+            for (HistoricActivityInstanceEntity historicActivityInstance : insertHistoryActivityList) {
+                historicActivityInstanceEntityManager.insert(historicActivityInstance);
+            }
+           // commandContext.getDbSqlSession().flush();
+            return null;
+        });*/
     }
 
 }

@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * Created by 任务跳转命令 on 2018/10/22.
  */
-public class JumpTaskCMD implements Command<Object>,Serializable {
+public class JumpTaskCMD implements Command<Void>,Serializable {
 
     /**
      * 当前任务
@@ -31,7 +31,7 @@ public class JumpTaskCMD implements Command<Object>,Serializable {
     }
 
     @Override
-    public Object execute(CommandContext commandContext) {
+    public Void execute(CommandContext commandContext) {
         ExecutionEntityManager executionEntityManager = commandContext.getExecutionEntityManager();
         TaskEntityManager taskEntityManager = commandContext.getTaskEntityManager();
         // 获取当前任务的来源任务及来源节点信息
