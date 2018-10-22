@@ -1,5 +1,6 @@
 package com.github.kjtang.activiti.controller;
 
+import com.github.kjtang.activiti.core.dto.task.BackTaskDTO;
 import com.github.kjtang.activiti.core.dto.task.ExecuteTaskActionDTO;
 import com.github.kjtang.activiti.core.dto.task.GetToDoTaskPagedListDTO;
 import com.github.kjtang.activiti.core.vo.task.TaskVO;
@@ -19,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api("activiti/v1.0.0")
 @RestController
-@RequestMapping("activiti6/api/task")
+@RequestMapping("activiti6/task")
 public class TaskController {
 
     @Autowired
     private TaskExtService taskExtService;
 
     @ApiOperation("查询代办任务")
-    @RequestMapping("getToDoTaskPagedList")
+    @RequestMapping(value="getToDoTaskPagedList",method = RequestMethod.POST)
     public ResponseEntity<PageInfo<TaskVO>> getToDoTaskPagedList(@RequestBody GetToDoTaskPagedListDTO toDoTaskPageListDTO){
         return ResponseEntity.ok(taskExtService.getToDoTaskPagedList(toDoTaskPageListDTO));
     }
@@ -35,6 +36,12 @@ public class TaskController {
     @RequestMapping(value="executeTaskAction",method = RequestMethod.POST)
     public void executeTaskAction(@RequestBody ExecuteTaskActionDTO executeTaskActionDTO){
             taskExtService.executeTaskAction(executeTaskActionDTO);
+    }
+
+    @ApiOperation("回退任务")
+    @RequestMapping(value="backTask",method = RequestMethod.POST)
+    public void backTask(@RequestBody BackTaskDTO backTaskDTO){
+           taskExtService.backTask(backTaskDTO);
     }
 
 }

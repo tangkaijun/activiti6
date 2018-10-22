@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -19,25 +20,26 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableWebMvc
 public class SwaggerConfig {
 
+    private static String apiTitle = "Activiti6-RESTFful APIS";
+
+    private static String version = "1.0.0";
+
     @Bean
     public Docket customDocket() {
         Docket docket = new Docket(DocumentationType.SWAGGER_2);
         docket.apiInfo(apiInfo());
         docket.select().apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class));
-        docket.select().paths(PathSelectors.regex("/activiti6/api/.*")).build();
+        docket.select().paths(PathSelectors.regex("/activiti6/.*")).build();
         return docket;
     }
 
     private ApiInfo apiInfo() {
-       // Contact contact = new Contact("唐开军", "http://www.github.com/tangkaijun", "571856518@qq.com");
-        return new ApiInfo("用户管理API",
-                "API接口",    //小标题
-                "0.0.1",        //版本
-                "www.baidu.com",//termsOfServiceUrl
-                null,
-                "API接口",//链接显示文字
-                "http://www.baidu.com"//网站链接
-        );
+        return new ApiInfoBuilder()
+                .title(apiTitle)
+                .version(version)
+                .license("详情请查看swagger官网api")
+                .licenseUrl("https://github.com/OAI/OpenAPI-Specification/blob/master/versions/1.2.md#524-parameter-object")
+                .build();
     }
 
 }

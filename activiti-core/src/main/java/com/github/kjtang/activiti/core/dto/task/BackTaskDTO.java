@@ -1,5 +1,6 @@
 package com.github.kjtang.activiti.core.dto.task;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.Map;
  * Created by kaijun on 2018/10/20.
  */
 @Data
+@ApiModel
 public class BackTaskDTO implements Serializable{
 
     @ApiModelProperty("任务处理人")

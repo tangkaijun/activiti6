@@ -39,7 +39,7 @@ import java.util.List;
  */
 @Api("流程管理")
 @RestController
-@RequestMapping("activiti6/api/process")
+@RequestMapping("activiti6/process")
 public class ProcessController {
 
     @Autowired
