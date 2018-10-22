@@ -54,4 +54,5 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         converters.add(new StringHttpMessageConverter());
         converters.add(converter);
     }
+
 }
