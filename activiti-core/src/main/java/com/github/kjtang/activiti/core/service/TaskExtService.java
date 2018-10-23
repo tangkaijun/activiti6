@@ -8,6 +8,8 @@ import com.github.kjtang.activiti.core.vo.task.TaskVO;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 /**
  * Created by kjtang on 2018/10/16.
  */
@@ -37,5 +39,12 @@ public interface TaskExtService {
      * @param backTaskDTO
      */
     void backTask(BackTaskDTO backTaskDTO);
+
+    /**
+     * 查询某个流程的代办任务
+     * @param processInstanceId
+     * @return
+     */
+    List<TaskVO> getProcessToDoTask(String processInstanceId);
 
 }

@@ -12,6 +12,7 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +25,7 @@ import java.util.*;
 /**
  * Created by kjtang on 2018/10/19.
  * https://www.cnblogs.com/leemup/p/activiti6_trace.html
+ * https://blog.csdn.net/xiaohelong2005/article/details/78628922?utm_source=blogxgwz6
  */
 @Service
 public class RuntimeExtServiceImpl implements RuntimeExtService {
@@ -42,6 +44,7 @@ public class RuntimeExtServiceImpl implements RuntimeExtService {
 
     @Override
     public ProcessInstanceVO startProcess(StartProcessDTO startProcessDTO) {
+        Authentication.setAuthenticatedUserId(startProcessDTO.getInitiatorId());
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(startProcessDTO.getProcessDefinitionKey(),startProcessDTO.getBusinessKey(),startProcessDTO.getProcessVariables());
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         BeanUtils.copyProperties(processInstance,processInstanceVO);

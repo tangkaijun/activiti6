@@ -3,6 +3,7 @@ package com.github.kjtang.activiti.core.dto.task;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,5 +29,8 @@ public class ExecuteTaskActionDTO {
 
     @ApiModelProperty("流程全局变量")
     private Map<String,Object> processVariable;
+
+    @ApiModelProperty("附件")
+    private List<String> attachements;
 
 }

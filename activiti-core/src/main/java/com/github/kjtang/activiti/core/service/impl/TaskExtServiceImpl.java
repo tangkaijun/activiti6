@@ -25,6 +25,7 @@ import org.activiti.engine.impl.interceptor.Command;
 import org.activiti.engine.impl.persistence.entity.HistoricActivityInstanceEntity;
 import org.activiti.engine.impl.persistence.entity.HistoricActivityInstanceEntityManager;
 import org.activiti.engine.runtime.Execution;
+import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
@@ -41,6 +42,10 @@ import java.util.stream.Collectors;
 /**
  * Created by tangkj on 2018/10/16.
  * 流程引擎任务模块扩展
+ * 驳回到发起人：https://blog.csdn.net/qq_29374433/article/details/80936917?utm_source=blogxgwz45
+ * https://blog.csdn.net/simplemurrina/article/details/81123902?utm_source=blogxgwz7
+ * https://blog.csdn.net/qq_32759985/article/details/80721130?utm_source=blogxgwz1
+ * https://blog.csdn.net/qq372854822/article/details/79743997
  */
 @Component
 public class TaskExtServiceImpl implements TaskExtService {
@@ -237,6 +242,19 @@ public class TaskExtServiceImpl implements TaskExtService {
            // commandContext.getDbSqlSession().flush();
             return null;
         });*/
+    }
+
+    @Override
+    public List<TaskVO> getProcessToDoTask(String processInstanceId) {
+        TaskQuery taskQuery = taskService.createTaskQuery();
+        List<Task> taskList = taskQuery.processInstanceId(processInstanceId).list();
+        List<TaskVO> taskVOList = new ArrayList<>();
+        for(Task task:taskList){
+            TaskVO taskVO = new TaskVO();
+            BeanUtils.copyProperties(task,taskVO);
+            taskVOList.add(taskVO);
+        }
+        return taskVOList;
     }
 
 }
