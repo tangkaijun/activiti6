@@ -27,4 +27,7 @@ public class StartProcessDTO {
     @ApiModelProperty("流程启动变量")
     private Map<String,Object> processVariables;
 
+    @ApiModelProperty("启动表单数据")
+    private Map<String,String> startFormData;
+
 }

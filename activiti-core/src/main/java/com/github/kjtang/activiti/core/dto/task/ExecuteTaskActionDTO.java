@@ -29,7 +29,7 @@ public class ExecuteTaskActionDTO {
 
     @ApiModelProperty("流程全局变量")
     private Map<String,Object> processVariable;
-
+    
     @ApiModelProperty("附件")
     private List<String> attachements;
 

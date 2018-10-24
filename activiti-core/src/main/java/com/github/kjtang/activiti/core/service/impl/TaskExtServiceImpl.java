@@ -17,6 +17,9 @@ import org.activiti.bpmn.model.FlowElement;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.SequenceFlow;
 import org.activiti.engine.*;
+import org.activiti.engine.form.FormProperty;
+import org.activiti.engine.form.StartFormData;
+import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.context.Context;
@@ -27,6 +30,7 @@ import org.activiti.engine.impl.persistence.entity.HistoricActivityInstanceEntit
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Attachment;
+import org.activiti.engine.task.IdentityLinkType;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.springframework.beans.BeanUtils;
@@ -68,6 +72,9 @@ public class TaskExtServiceImpl implements TaskExtService {
     @Autowired
     private ManagementService managementService;
 
+    @Autowired
+    private FormService formService;
+
     @Override
     public PageInfo<TaskVO> getToDoTaskPagedList(GetToDoTaskPagedListDTO toDoTaskPageListDTO) {
         TaskQuery taskQuery = taskService.createTaskQuery();
@@ -79,6 +86,7 @@ public class TaskExtServiceImpl implements TaskExtService {
         taskQuery.taskCandidateOrAssigned(assignee);
         Integer pageNum = toDoTaskPageListDTO.getPageNum();
         Integer pageSize = toDoTaskPageListDTO.getPageSize();
+        taskQuery.includeProcessVariables().includeTaskLocalVariables();
         taskQuery.orderByTaskPriority().desc();//根据任务优先级降序
         taskQuery.orderByTaskCreateTime().desc();//根据任务创建时间降序
         Long totalCount = taskQuery.count();//查询总任务数
@@ -109,15 +117,14 @@ public class TaskExtServiceImpl implements TaskExtService {
         String action = executeTaskActionDTO.getExecuteAction();
         TaskActionEnum taskActionEnum = TaskActionEnum.valueByName(action);
         String taskId = executeTaskActionDTO.getTaskId();
-        Authentication.setAuthenticatedUserId(executeTaskActionDTO.getAssignee());
         switch (taskActionEnum){
             case ACTION_COMPLETE:
                 TaskQuery taskQuery = taskService.createTaskQuery();
                 Task task = taskQuery.taskId(taskId).singleResult();
-                taskService.addComment(taskId,task.getProcessInstanceId(),executeTaskActionDTO.getComment());//新增批注
-                Attachment attachment = taskService.createAttachment("title", taskId, task.getProcessInstanceId(), "descirption", "content", "http://www.baidu.com/index.html");
-                taskService.saveAttachment(attachment);
-                taskService.complete(executeTaskActionDTO.getTaskId());
+               // taskService.addComment(taskId,task.getProcessInstanceId(),executeTaskActionDTO.getComment());//新增批注
+               // Attachment attachment = taskService.createAttachment("title", taskId, task.getProcessInstanceId(), "descirption", "content", "http://www.baidu.com/index.html");
+              //  taskService.saveAttachment(attachment);
+                taskService.complete(executeTaskActionDTO.getTaskId(),executeTaskActionDTO.getProcessVariable());
                 break;
         }
     }

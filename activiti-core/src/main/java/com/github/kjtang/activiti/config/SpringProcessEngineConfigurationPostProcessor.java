@@ -2,8 +2,10 @@ package com.github.kjtang.activiti.config;
 
 import com.github.kjtang.activiti.core.listener.GlobalActivitiEventListener;
 import com.github.kjtang.activiti.core.listener.ProcessTaskAssigneeEventHandler;
+import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.event.ActivitiEventType;
+import org.activiti.engine.impl.history.HistoryLevel;
 import org.activiti.spring.SpringProcessEngineConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,6 @@ public class SpringProcessEngineConfigurationPostProcessor implements BeanPostPr
             springProcessEngineConfiguration.setActivityFontName("宋体");
             springProcessEngineConfiguration.setLabelFontName("宋体");
             springProcessEngineConfiguration.setActivityFontName("宋体");
-           // springProcessEngineConfiguration.setProcessDiagramGenerator(new ExtDefaultProcessDiagramGenerator());
-            //此处也可以配置全局监听器
         }
         if(bean instanceof RuntimeService){
             RuntimeService runtimeService = (RuntimeService)bean;

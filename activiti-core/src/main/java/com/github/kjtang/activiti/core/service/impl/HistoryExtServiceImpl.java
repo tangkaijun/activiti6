@@ -1,6 +1,7 @@
 package com.github.kjtang.activiti.core.service.impl;
 
 import com.github.kjtang.activiti.core.dto.process.GetMyRequestListDTO;
+import com.github.kjtang.activiti.core.dto.task.GetHaveDoneTaskPageListDTO;
 import com.github.kjtang.activiti.core.service.HistoryExtService;
 import com.github.kjtang.activiti.core.vo.history.HistoricProcessInstanceVO;
 import com.github.kjtang.activiti.core.vo.task.TaskVO;
@@ -12,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,15 +83,16 @@ public class HistoryExtServiceImpl implements HistoryExtService{
         }else if(processState!=null && processState.equals(ProcessStateEnum.PROCESS_UNFINISHED.getCode())){
             historicProcessInstanceQuery.unfinished();
         }
+        historicProcessInstanceQuery.includeProcessVariables();
         historicProcessInstanceQuery.orderByProcessInstanceStartTime().desc();
         Long totalCount = historicProcessInstanceQuery.count();
-        historicProcessInstanceQuery.listPage((pageNum-1)*pageSize,pageSize);
-        List<HistoricProcessInstance> historicProcessInstanceList = historyService.createHistoricProcessInstanceQuery().startedBy(initiatorId).list();
+        List<HistoricProcessInstance> historicProcessInstanceList = historicProcessInstanceQuery.listPage((pageNum-1)*pageSize,pageSize);
         List<HistoricProcessInstanceVO> myProcessList = new ArrayList<>();
         if(!CollectionUtils.isEmpty(historicProcessInstanceList)){
             historicProcessInstanceList.forEach(historicProcessInstance -> {
                 HistoricProcessInstanceVO historicProcessInstanceVO = new HistoricProcessInstanceVO();
                 BeanUtils.copyProperties(historicProcessInstance,historicProcessInstanceVO);
+                myProcessList.add(historicProcessInstanceVO);
             });
         }
         PageInfo<HistoricProcessInstanceVO> pageInfo = new PageInfo<>(myProcessList);
@@ -97,6 +100,43 @@ public class HistoryExtServiceImpl implements HistoryExtService{
         pageInfo.setPageSize(pageSize);
         pageInfo.setTotal(totalCount);
         pageInfo.setList(myProcessList);
+        return pageInfo;
+    }
+
+    @Override
+    public PageInfo<TaskVO> getHaveDoneTaskPageList(GetHaveDoneTaskPageListDTO haveDoneTaskPageListDTO) {
+        HistoricTaskInstanceQuery historicTaskInstanceQuery = historyService.createHistoricTaskInstanceQuery();
+        Integer pageNum =  haveDoneTaskPageListDTO.getPageNum();
+        Integer pageSize = haveDoneTaskPageListDTO.getPageSize();
+        String assignee = haveDoneTaskPageListDTO.getAssignee();
+        historicTaskInstanceQuery.taskAssignee(assignee);//必须
+        Date startTime = haveDoneTaskPageListDTO.getStartTime();
+        Date endTime = haveDoneTaskPageListDTO.getEndTime();
+        if(startTime!=null){
+            historicTaskInstanceQuery.taskCompletedAfter(startTime);
+        }
+        if(endTime!=null){
+            historicTaskInstanceQuery.taskCompletedBefore(endTime);
+        }
+        historicTaskInstanceQuery.includeProcessVariables().includeTaskLocalVariables();
+        historicTaskInstanceQuery.finished();//任务已经完成
+        historicTaskInstanceQuery.orderByHistoricTaskInstanceStartTime().desc();
+        Long totalCount = historicTaskInstanceQuery.count();
+        List<HistoricTaskInstance> historicTaskInstanceList = historicTaskInstanceQuery.listPage((pageNum-1) * pageSize,pageSize);
+        List<TaskVO> finishTaskVoList = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(historicTaskInstanceList)){
+            historicTaskInstanceList.forEach(historicTaskInstance -> {
+                TaskVO taskVO = new TaskVO();
+                System.out.println("流程。。。。。");
+                BeanUtils.copyProperties(historicTaskInstance,taskVO);
+                finishTaskVoList.add(taskVO);
+            });
+        }
+        PageInfo<TaskVO> pageInfo = new PageInfo<>(finishTaskVoList);
+        pageInfo.setPageNum(pageNum);
+        pageInfo.setPageSize(pageSize);
+        pageInfo.setTotal(totalCount);
+        pageInfo.setList(finishTaskVoList);
         return pageInfo;
     }
 

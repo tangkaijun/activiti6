@@ -37,6 +37,11 @@ spring:
   activiti:
     databaseSchemaUpdate: true
     checkProcessDefinitions: false
+    db-history-used: true
+    db-identity-used: true
+    history-level: full
+    # asyncExecutorActivate是指Activiti在流程启动时就激活asyncExecutorActivate
+    async-executor-activate: false
   jackson:
      date-format: yyyy-MM-dd HH:mm:ss
      time-zone: Asia/Shanghai

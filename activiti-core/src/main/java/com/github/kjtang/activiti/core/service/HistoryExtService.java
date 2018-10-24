@@ -1,8 +1,11 @@
 package com.github.kjtang.activiti.core.service;
 
+import com.github.kjtang.activiti.core.dto.common.BasePageDTO;
 import com.github.kjtang.activiti.core.dto.process.GetMyRequestListDTO;
+import com.github.kjtang.activiti.core.dto.task.GetHaveDoneTaskPageListDTO;
 import com.github.kjtang.activiti.core.vo.history.HistoricProcessInstanceVO;
 import com.github.kjtang.activiti.core.vo.process.ProcessInstanceVO;
+import com.github.kjtang.activiti.core.vo.task.TaskVO;
 import com.github.pagehelper.PageInfo;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
@@ -49,5 +52,11 @@ public interface HistoryExtService {
      * @return
      */
     PageInfo<HistoricProcessInstanceVO> getMyRequestPagedList(GetMyRequestListDTO myRequestListDTO);
+
+    /**
+     * 查询已经完成的任务
+     * @return
+     */
+    PageInfo<TaskVO> getHaveDoneTaskPageList(GetHaveDoneTaskPageListDTO haveDoneTaskPageListDTO);
 
 }

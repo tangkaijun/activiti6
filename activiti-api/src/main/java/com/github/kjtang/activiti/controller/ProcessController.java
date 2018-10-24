@@ -1,11 +1,15 @@
 package com.github.kjtang.activiti.controller;
 
+import com.github.kjtang.activiti.core.dto.process.GetMyRequestListDTO;
 import com.github.kjtang.activiti.core.dto.process.StartProcessDTO;
+import com.github.kjtang.activiti.core.service.HistoryExtService;
 import com.github.kjtang.activiti.core.service.ProcessDeploymentService;
 import com.github.kjtang.activiti.core.service.RuntimeExtService;
 import com.github.kjtang.activiti.core.vo.deployment.DeploymentVO;
+import com.github.kjtang.activiti.core.vo.history.HistoricProcessInstanceVO;
 import com.github.kjtang.activiti.core.vo.process.ProcessInstanceVO;
 import com.github.kjtang.activiti.response.ResponseVO;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.activiti.bpmn.model.BpmnModel;
@@ -63,6 +67,9 @@ public class ProcessController {
     @Autowired
     protected ProcessEngineConfiguration processEngineConfiguration;
 
+    @Autowired
+    private HistoryExtService historyExtService;
+
     @ApiOperation("流程部署(流程图片引擎自动生成，支持.zip,.bar,.bpmn20.xml,.bpmn文件格式)")
     @RequestMapping(value = "/deploymentProcess",method = RequestMethod.POST)
     public ResponseVO<DeploymentVO> deployment(@RequestParam("processName") String processName, @RequestParam("processSource") MultipartFile processSource) throws Exception{
@@ -71,6 +78,13 @@ public class ProcessController {
          return null;
     }
 
+    @ApiOperation("查询我的请求")
+    @RequestMapping(value = "/getMyRequestPagedList",method = RequestMethod.POST)
+    public ResponseEntity<PageInfo<HistoricProcessInstanceVO>> getMyRequestPagedList(@RequestBody GetMyRequestListDTO myRequestListDTO){
+       return ResponseEntity.ok(historyExtService.getMyRequestPagedList(myRequestListDTO));
+    }
+
+    @ApiOperation("查看流程实例图")
     @RequestMapping(value="getProcessInstanceDiagram",method = RequestMethod.GET)
     public void getProcessInstanceDiagram(@RequestParam("processInstanceId") String processInstanceId, HttpServletResponse response) throws Exception{
         InputStream inputStream =  processInstanceService.getResourceDiagramInputStream(processInstanceId);
@@ -214,6 +228,7 @@ public class ProcessController {
 
     }
 
+    @ApiOperation("启动流程实例")
     @RequestMapping(value="startProcess",method = RequestMethod.POST)
     public ProcessInstanceVO startProcess(@RequestBody StartProcessDTO startProcessDTO){
         return processInstanceService.startProcess(startProcessDTO);

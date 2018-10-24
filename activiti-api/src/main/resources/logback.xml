@@ -36,6 +36,8 @@
             <maxHistory>3</maxHistory>
         </rollingPolicy>
     </appender>
+    <!-- show activiti sql-->
+    <logger name="org.activiti.engine.impl.persistence.entity" level="DEBUG" />
     <root level="info">
         <appender-ref ref="consoleLog" />
         <appender-ref ref="fileInfoLog" />

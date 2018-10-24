@@ -1,18 +1,17 @@
 package com.github.kjtang.activiti.core.service.impl;
 
 import com.github.kjtang.activiti.core.dto.process.StartProcessDTO;
+import com.github.kjtang.activiti.core.service.ProcessDefinitionService;
 import com.github.kjtang.activiti.core.service.RuntimeExtService;
 import com.github.kjtang.activiti.core.vo.process.ProcessInstanceVO;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.SequenceFlow;
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
+import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.springframework.beans.BeanUtils;
@@ -42,9 +41,15 @@ public class RuntimeExtServiceImpl implements RuntimeExtService {
     @Autowired
     private ProcessEngine processEngine;
 
+
+    @Autowired
+    private ProcessDefinitionService processDefinitionService;
+
     @Override
     public ProcessInstanceVO startProcess(StartProcessDTO startProcessDTO) {
         Authentication.setAuthenticatedUserId(startProcessDTO.getInitiatorId());
+        ProcessDefinition processDefinition = processDefinitionService.getProcessDefinition(startProcessDTO.getProcessDefinitionKey());
+        if(processDefinition==null) throw new RuntimeException("不存在Key为"+startProcessDTO.getProcessDefinitionKey()+"的流程定义");
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(startProcessDTO.getProcessDefinitionKey(),startProcessDTO.getBusinessKey(),startProcessDTO.getProcessVariables());
         ProcessInstanceVO processInstanceVO = new ProcessInstanceVO();
         BeanUtils.copyProperties(processInstance,processInstanceVO);
